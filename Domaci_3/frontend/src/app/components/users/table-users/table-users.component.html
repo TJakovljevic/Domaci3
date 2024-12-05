@@ -1,0 +1,50 @@
+<div class="container mt-5">
+  <h2 class="text-center mb-4">User Management</h2>
+
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead class="table-primary">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Surname</th>
+        <th scope="col">Email</th>
+        <th scope="col">Permissions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <!-- Dynamically generated rows using *ngFor -->
+      <tr *ngFor="let user of users; let i = index">
+        <th scope="row">{{ i + 1 }}</th>
+        <td>{{ user.first_name }}</td>
+        <td>{{ user.last_name }}</td>
+        <td>
+          <a *ngIf="canUpdateUsers" [routerLink]="['/edit-user', user.id]">{{ user.email }}</a>
+          <span *ngIf="!canUpdateUsers">{{ user.email }}</span>
+        </td>
+        <td>
+          <span *ngFor="let permission of user.permissions" class="widget-permission">
+            {{ permission.name }}
+        </span>
+        </td>
+        <button *ngIf="canDeleteUsers" class="btn btn-danger btn-sm" (click)="deleteUser(user.id)">
+          Delete
+        </button>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+  .widget-permission {
+    padding: 8px 12px;
+    border-radius: 50px; /* Rounded shape */
+    background-color: #007bff; /* Primary background */
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow */
+    margin-right: 10px; /* Space between badges */
+    margin-bottom: 10px; /* Space below the widget */
+    font-size: 14px;
+  }
+</style>

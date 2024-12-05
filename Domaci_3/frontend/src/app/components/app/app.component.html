@@ -1,0 +1,29 @@
+<header>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a [routerLink]="'/'" class="navbar-brand">CMS</a>
+      <div class="collapse navbar-collapse justify-content-between" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a [routerLink]="'/table-users'" class="nav-link active" aria-current="page">Users</a>
+          <div *ngIf="canCreateUsers">
+            <a [routerLink]="'/create-user'" class="nav-link active" aria-current="page">Create Users</a>
+          </div>
+          <a [routerLink]="'/login'" class="nav-link active" aria-current="page">Login</a>
+          <div class="ms-auto">
+            <span class="nav-link">User email:  {{current_user}}</span>
+          </div>
+        </div>
+        <div class="d-flex">
+
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<div class="container pt-3">
+  <router-outlet></router-outlet>
+</div>
+
+
+
