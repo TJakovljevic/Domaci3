@@ -39,10 +39,10 @@ public class UserController {
         return this.userService.findById(id);
     }
 
-    @GetMapping(value = "/permissions/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public List<Permissions> getUserPermissions(@PathVariable Long id){
-        Optional<User> user = userService.findById(id);
-        return user.get().getPermissions();
+    @GetMapping(value = "/permissions/{email}", produces=MediaType.APPLICATION_JSON_VALUE)
+    public List<Permissions> getUserPermissions(@PathVariable String email){
+
+        return  userService.getUserPermissions(email);
     }
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public User createUser(@RequestBody UserDto userDto){
@@ -62,6 +62,51 @@ public class UserController {
 
     }
 
+//     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<Map<String, Object>> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+//        Optional<User> optionalUser = this.userService.findById(id);
+//        System.out.println("UserDto: " + userDto);
+//
+//        if (optionalUser.isPresent()) {
+//            User existingUser = optionalUser.get();
+//
+//            // Update user fields
+//            existingUser.setFirst_name(userDto.getFirst_name());
+//            existingUser.setLast_name(userDto.getLast_name());
+//
+//            // Check if email is being updated
+//            boolean emailChanged = !existingUser.getEmail().equals(userDto.getEmail());
+//            existingUser.setEmail(userDto.getEmail());
+//
+//            // Update permissions
+//            List<Permissions> permissions = permissionsRepository.findAllById(userDto.getPermissions());
+//            existingUser.setPermissions(permissions);
+//
+//            // Save the updated user
+//            User updatedUser = this.userService.save(existingUser);
+//
+//            Map<String, Object> response = new HashMap<>();
+//            response.put("user", updatedUser);
+//
+//            if (emailChanged) {
+//                String newJwt = jwtUtil.generateToken(updatedUser.getEmail());
+//                response.put("token", newJwt);
+//
+//                // Update Spring Security context
+//                Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+//                Authentication newAuth = new UsernamePasswordAuthenticationToken(
+//                        updatedUser,
+//                        currentAuth.getCredentials(),
+//                        currentAuth.getAuthorities()
+//                );
+//                SecurityContextHolder.getContext().setAuthentication(newAuth);
+//            }
+//
+//            return ResponseEntity.ok(response);
+//        }
+//
+//        return ResponseEntity.notFound().build();
+//    }
     @PutMapping(value="/{id}",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
         Optional<User> optionalUser = this.userService.findById(id);
