@@ -3,6 +3,7 @@ import { Permission, UserDto } from "../../../model";
 import { ActivatedRoute, Router } from "@angular/router";
 import { EditUserService } from "../../../services/edit-user.service";
 import { forkJoin } from 'rxjs';
+import {PermissionsService} from "../../../services/permissions.service";
 
 @Component({
   selector: 'app-edit-users',
@@ -12,6 +13,7 @@ import { forkJoin } from 'rxjs';
 export class EditUsersComponent implements OnInit {
 
   route_id: string = "";
+  current_user: string = "";
 
   user: UserDto = {
     first_name: '',
@@ -21,39 +23,78 @@ export class EditUsersComponent implements OnInit {
     permissions: []
   };
 
+  permissions: Permission[] = [];
+
   availablePermissions: Permission[] = [];
   selectedPermissions: Set<number> = new Set();
 
   errorMessage: string = '';
-
+  updated_jwt: string ="";
   canUpdateUsers: boolean = false;
 
   constructor(
     private editUserService: EditUserService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private permissionsService: PermissionsService
   ) {}
 
   ngOnInit(): void {
-    this.checkPermissions();
 
+    this.getUser();
+    this.fetchPermissions();
+    this.loadData();
+  }
+
+  checkPermissions()
+  {
+
+    this.canUpdateUsers = this.permissions.some((permission: Permission) =>
+      permission.name === 'can_update_users'
+    );
+
+    this.canUpdateCheck();
+    console.log(this.canUpdateUsers)
+  }
+
+
+  fetchPermissions(){
+    console.log(this.current_user)
+    this.permissionsService.fetchPermissions(this.current_user).
+    subscribe(
+      (response: Permission[]) => {
+        this.permissions = response;
+        console.log(this.permissions)
+
+        this.checkPermissions();
+
+      },
+      error => {
+        console.error('Error fetching permissions:', error);
+      }
+    );
+  }
+
+  getUser(){
+    const token = localStorage.getItem("authToken")
+    if (token != null) {
+
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+      this.current_user = decodedToken.sub || "Guest";
+      console.log(this.current_user);
+    }
+  }
+
+  canUpdateCheck(){
     if (!this.canUpdateUsers) {
+      console.log("!canUpdate")
       alert("You don't have the permission for this action!");
       this.router.navigate(['']);
     }
 
-    this.loadData();
   }
 
-  checkPermissions() {
-    const token = localStorage.getItem("authToken");
-    if (token != null) {
-      const decodedToken = JSON.parse(atob(token.split('.')[1]));
-      const permissions = decodedToken.permissions || [];
 
-      this.canUpdateUsers = permissions.some((permission: { name: string }) => permission.name === 'can_update_users');
-    }
-  }
 
   loadData() {
     this.route_id = this.route.snapshot.paramMap.get('id') || '';
@@ -67,6 +108,7 @@ export class EditUsersComponent implements OnInit {
         this.availablePermissions = permissionsResponse;
 
         this.selectedPermissions = new Set(this.user.permissions.map(permission => permission.id));
+
       },
       error => {
         console.error('Error loading data:', error);
@@ -113,7 +155,12 @@ export class EditUsersComponent implements OnInit {
     this.editUserService.updateUser(this.route_id, updatedUser).subscribe(
       response => {
         alert('User updated successfully!');
-        this.router.navigate(['/table-users']);
+        this.updated_jwt = response.token;
+        window.location.reload()
+        // this.router.navigate(['/table-users']);
+
+
+
       },
       error => {
         console.error('Error updating user:', error);

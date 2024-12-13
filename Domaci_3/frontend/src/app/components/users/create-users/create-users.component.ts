@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {CreateUserService} from "../../../services/create-user.service";
 import {Permission, User, UserDto} from "../../../model";
 import {Router} from "@angular/router";
+import {PermissionsService} from "../../../services/permissions.service";
 
 
 @Component({
@@ -12,36 +13,21 @@ import {Router} from "@angular/router";
 export class CreateUsersComponent implements OnInit{
 
 
-  canReadUsers: boolean = false;
   canCreateUsers: boolean = false;
-  canUpdateUsers: boolean = false;
-  canDeleteUsers: boolean = false;
+  current_user: string = "";
+  permissions: Permission[] = [];
+
 
   checkPermissions() {
-    const token = localStorage.getItem("authToken")
-    if (token != null) {
-      const decodedToken = JSON.parse(atob(token.split('.')[1]));
-      console.log(decodedToken);
-
-      const permissions = decodedToken.permissions || [];
-
-      this.canReadUsers = permissions.some((permission: { name: string;
-      }) => permission.name === 'can_read_users');
-      this.canCreateUsers = permissions.some((permission: {
+    console.log(this.permissions)
+      this.canCreateUsers = this.permissions.some((permission: {
         name: string;
       }) => permission.name === 'can_create_users');
-      this.canUpdateUsers = permissions.some((permission: {
-        name: string;
-      }) => permission.name === 'can_update_users');
-      this.canDeleteUsers = permissions.some((permission: {
-        name: string;
-      }) => permission.name === 'can_delete_users');
 
-      console.log(this.canReadUsers)
+
+      this.canCreateCheck();
       console.log(this.canCreateUsers)
-      console.log(this.canUpdateUsers)
-      console.log(this.canDeleteUsers)
-    }
+
   }
 
 
@@ -58,17 +44,50 @@ export class CreateUsersComponent implements OnInit{
   errorMessage: string = '';
 
   ngOnInit(): void {
-    this.checkPermissions()
-    if(!this.canCreateUsers){
-      alert("You don't have the permission for this action!")
-      this.router.navigate(['']);
-    }
+    this.getUser();
     this.fetchPermissions();
+    this.fetchAllPermissions();
+
+  }
+
+  fetchPermissions(){
+    console.log(this.current_user)
+    this.permissionsService.fetchPermissions(this.current_user).
+    subscribe(
+      (response: Permission[]) => {
+        this.permissions = response;
+        console.log(this.permissions)
+        this.checkPermissions();
+
+      },
+      error => {
+        console.error('Error fetching permissions:', error);
+      }
+    );
+
 
   }
 
 
-  constructor(private createUserService: CreateUserService, private router: Router) {}
+  getUser(){
+    const token = localStorage.getItem("authToken")
+    if (token != null) {
+
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+      this.current_user = decodedToken.sub || "Guest";
+      console.log(this.current_user);
+    }
+  }
+
+  canCreateCheck(){
+    if(!this.canCreateUsers){
+      alert("You don't have the permission for this action!")
+      this.router.navigate(['']);
+    }
+  }
+
+
+  constructor(private createUserService: CreateUserService, private router: Router, private permissionsService: PermissionsService) {}
 
 
   togglePermission(permission: Permission) {
@@ -80,7 +99,7 @@ export class CreateUsersComponent implements OnInit{
     }
   }
 
-  fetchPermissions(){
+  fetchAllPermissions(){
     this.createUserService.fetchPermissions().
     subscribe(( response)=>{
      this.availablePermissions = response;

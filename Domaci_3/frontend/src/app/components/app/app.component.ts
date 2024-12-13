@@ -1,4 +1,8 @@
 import {Component, OnInit} from '@angular/core';
+import {PermissionsService} from "../../services/permissions.service";
+import {Permission} from "../../model";
+import {filter} from "rxjs";
+import {NavigationEnd, Router} from "@angular/router";
 
 @Component({
   selector: 'app-root',
@@ -8,44 +12,56 @@ import {Component, OnInit} from '@angular/core';
 export class AppComponent implements OnInit{
 
   current_user: string = ""
-
-  canReadUsers: boolean = false;
+  permissions: Permission[] = []
   canCreateUsers: boolean = false;
-  canUpdateUsers: boolean = false;
-  canDeleteUsers: boolean = false;
 
+
+  constructor(private router: Router,private permissionsService: PermissionsService) {}
   checkPermissions() {
+
+      this.canCreateUsers = this.permissions.some((permission: {
+        name: string;
+      }) => permission.name === 'can_create_users');
+
+
+      console.log(this.canCreateUsers)
+
+  }
+
+  getUser(){
     const token = localStorage.getItem("authToken")
     if (token != null) {
 
       const decodedToken = JSON.parse(atob(token.split('.')[1]));
       this.current_user = decodedToken.sub || "Guest";
       console.log(this.current_user);
-
-      const permissions = decodedToken.permissions || [];
-
-      this.canReadUsers = permissions.some((permission: { name: string;
-      }) => permission.name === 'can_read_users');
-      this.canCreateUsers = permissions.some((permission: {
-        name: string;
-      }) => permission.name === 'can_create_users');
-      this.canUpdateUsers = permissions.some((permission: {
-        name: string;
-      }) => permission.name === 'can_update_users');
-      this.canDeleteUsers = permissions.some((permission: {
-        name: string;
-      }) => permission.name === 'can_delete_users');
-
-      console.log(this.canReadUsers)
-      console.log(this.canCreateUsers)
-      console.log(this.canUpdateUsers)
-      console.log(this.canDeleteUsers)
     }
+  }
+
+  fetchPermissions(){
+    console.log(this.current_user)
+    this.permissionsService.fetchPermissions(this.current_user).
+    subscribe(
+      (response: Permission[]) => {
+        this.permissions = response;
+        console.log(this.permissions)
+
+        this.checkPermissions();
+
+      },
+      error => {
+        console.error('Error fetching permissions:', error);
+      }
+    );
   }
 
 
   ngOnInit(): void {
-    this.checkPermissions()
+
+
+    this.getUser();
+    this.fetchPermissions()
+
   }
 
 }

@@ -28,3 +28,6 @@ export interface Permission{
 export interface PermissionDto{
   id:number;
 }
+interface PermissionsResponse {
+  permissions: Permission[];
+}

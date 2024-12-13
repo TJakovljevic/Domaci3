@@ -1,7 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {User} from "../../../model";
+import {Permission, User} from "../../../model";
 import {TableUsersService} from "../../../services/table-users.service";
 import {Router} from "@angular/router";
+import {PermissionsService} from "../../../services/permissions.service";
+
+
 
 @Component({
   selector: 'app-table-users',
@@ -11,45 +14,60 @@ import {Router} from "@angular/router";
 export class TableUsersComponent implements OnInit {
 
 
+
     users: User[] = []
+    current_user: string = "";
     canReadUsers: boolean = false;
     canCreateUsers: boolean = false;
     canUpdateUsers: boolean = false;
     canDeleteUsers: boolean = false;
+    private permissions: Permission[] = []
 
-    checkPermissions() {
-      const token = localStorage.getItem("authToken")
-      if (token != null) {
-        const decodedToken = JSON.parse(atob(token.split('.')[1]));
-        console.log(decodedToken);
 
-        const permissions = decodedToken.permissions || [];
+  checkPermissions()
+    {
+      this.canReadUsers = this.permissions.some((permission: Permission) =>
+        permission.name === 'can_read_users'
+      );
 
-        this.canReadUsers = permissions.some((permission: { name: string;
-        }) => permission.name === 'can_read_users');
-        this.canCreateUsers = permissions.some((permission: {
-          name: string;
-        }) => permission.name === 'can_create_users');
-        this.canUpdateUsers = permissions.some((permission: {
-          name: string;
-        }) => permission.name === 'can_update_users');
-        this.canDeleteUsers = permissions.some((permission: {
-          name: string;
-        }) => permission.name === 'can_delete_users');
+      this.canCreateUsers = this.permissions.some((permission: Permission) =>
+        permission.name === 'can_create_users'
+      );
 
-        console.log(this.canReadUsers)
-        console.log(this.canCreateUsers)
-        console.log(this.canUpdateUsers)
-        console.log(this.canDeleteUsers)
-      }else {
-          // alert('You do not have any permissions.');
-        }
+      this.canUpdateUsers = this.permissions.some((permission: Permission) =>
+        permission.name === 'can_update_users'
+      );
+
+      this.canDeleteUsers = this.permissions.some((permission: Permission) =>
+        permission.name === 'can_delete_users'
+      );
+
+      this.canReadCheck()
+      console.log(this.canCreateUsers)
+      console.log(this.canReadUsers)
+      console.log(this.canDeleteUsers)
+      console.log(this.canUpdateUsers)
     }
 
 
-  ngOnInit(): void {
+    ngOnInit(): void {
+      this.getUser()
+      this.fetchPermissions()
 
-    this.checkPermissions();
+
+
+  }
+
+  getUser(){
+    const token = localStorage.getItem("authToken")
+    if (token != null) {
+
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+      this.current_user = decodedToken.sub || "Guest";
+      console.log(this.current_user);
+    }
+  }
+  canReadCheck(){
     if (this.canReadUsers) {
       this.tableUsersService.fetchUsers().subscribe(
         (users) => {
@@ -64,20 +82,25 @@ export class TableUsersComponent implements OnInit {
       this.router.navigate([''])
     }
   }
+  fetchPermissions(){
+      console.log(this.current_user)
+    this.permissionsService.fetchPermissions(this.current_user).
+    subscribe(
+      (response: Permission[]) => {
+        this.permissions = response;
+        console.log(this.permissions)
 
-  constructor(private tableUsersService: TableUsersService, private router: Router) {}
-    fetchUsers(){
-      this.tableUsersService.fetchUsers().
-      subscribe(
-            response=>{
-        this.users = response;
+        this.checkPermissions();
 
       },
       error => {
-        console.error('Error fetching detection data:', error);
-      });
+        console.error('Error fetching permissions:', error);
+      }
+    );
+  }
 
-    }
+  constructor(private tableUsersService: TableUsersService, private router: Router, private permissionsService: PermissionsService) {}
+
 
     deleteUser(id: number){
     this.tableUsersService.deleteUser(id).
