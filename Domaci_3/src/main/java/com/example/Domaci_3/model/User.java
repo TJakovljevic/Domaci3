@@ -31,6 +31,12 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private boolean admin;
+
+    @OneToMany(mappedBy = "createdBy")
+    private List<Order> orders = new ArrayList<>();
+
     @ManyToMany
     @JoinTable(
             name = "users_permissions",

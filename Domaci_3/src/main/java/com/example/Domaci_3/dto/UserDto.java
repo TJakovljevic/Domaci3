@@ -11,6 +11,7 @@ public class UserDto {
     private String last_name;
     private String email;
     private String password;
+    private boolean admin;
     private List<Long> permissions;
 
     @Override
@@ -20,6 +21,7 @@ public class UserDto {
                 ", last_name='" + last_name + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", boolean='" + admin + '\'' +
                 ", permissions=" + permissions +
                 '}';
     }

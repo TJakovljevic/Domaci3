@@ -42,7 +42,7 @@ public class UserController {
     @GetMapping(value = "/permissions/{email}", produces=MediaType.APPLICATION_JSON_VALUE)
     public List<Permissions> getUserPermissions(@PathVariable String email){
 
-        return  userService.getUserPermissions(email);
+        return userService.getUserPermissions(email);
     }
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public User createUser(@RequestBody UserDto userDto){
