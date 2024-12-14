@@ -1,9 +1,11 @@
 package com.example.Domaci_3.controllers;
 
 import com.example.Domaci_3.dto.UserDto;
+import com.example.Domaci_3.model.Order;
 import com.example.Domaci_3.model.Permissions;
 import com.example.Domaci_3.model.User;
 import com.example.Domaci_3.repositories.PermissionsRepository;
+import com.example.Domaci_3.services.OrderService;
 import com.example.Domaci_3.services.UserService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +36,8 @@ public class UserController {
         System.out.println("GetALLUsers");
         return userService.findAll();
     }
+
+
     @GetMapping(value="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Optional<User> getSingleUser(@PathVariable Long id){
         return this.userService.findById(id);

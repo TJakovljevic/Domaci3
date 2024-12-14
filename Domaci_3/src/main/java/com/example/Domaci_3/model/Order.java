@@ -1,6 +1,9 @@
 package com.example.Domaci_3.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -10,6 +13,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "orders")
+
 public class Order {
 
     @Id
@@ -33,6 +37,5 @@ public class Order {
             joinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "dish_id", referencedColumnName = "id")
     )
-    @JsonIgnore
     private List<Dish> dishes = new ArrayList<>();
 }

@@ -1,7 +1,9 @@
 package com.example.Domaci_3.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -35,6 +37,7 @@ public class User {
     private boolean admin;
 
     @OneToMany(mappedBy = "createdBy")
+    @JsonIgnore
     private List<Order> orders = new ArrayList<>();
 
     @ManyToMany
@@ -44,7 +47,6 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "permission_id", referencedColumnName = "id"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "permission_id"})
     )
-
     private List<Permissions> permissions = new ArrayList<>();
 
 

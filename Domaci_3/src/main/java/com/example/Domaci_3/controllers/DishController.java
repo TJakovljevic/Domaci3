@@ -16,7 +16,7 @@ import java.util.Optional;
 @RequestMapping("/dish")
 public class DishController {
 
-    private DishService dishService;
+    private final DishService dishService;
 
     public DishController(DishService dishService){
         this.dishService = dishService;

@@ -12,6 +12,7 @@ public class UserDto {
     private String email;
     private String password;
     private boolean admin;
+    private List<Long> orders;
     private List<Long> permissions;
 
     @Override
@@ -22,6 +23,7 @@ public class UserDto {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", boolean='" + admin + '\'' +
+                ", orders'" + orders + '\'' +
                 ", permissions=" + permissions +
                 '}';
     }

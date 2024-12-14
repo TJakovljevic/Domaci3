@@ -1,15 +1,18 @@
 package com.example.Domaci_3.bootstrap;
 
-import com.example.Domaci_3.model.Permissions;
-import com.example.Domaci_3.model.User;
+import com.example.Domaci_3.model.*;
+import com.example.Domaci_3.repositories.DishRepository;
+import com.example.Domaci_3.repositories.OrderRepository;
 import com.example.Domaci_3.repositories.PermissionsRepository;
 import com.example.Domaci_3.repositories.UserRepository;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 @Component
@@ -19,12 +22,17 @@ public class BootstrapData implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final PermissionsRepository permissionsRepository;
+    private final DishRepository dishRepository;
+    private final OrderRepository orderRepository;
 
     @Autowired
-    public BootstrapData(UserRepository userRepository, PasswordEncoder passwordEncoder, PermissionsRepository permissionsRepository) {
-         this.userRepository = userRepository;
+    public BootstrapData(UserRepository userRepository, PasswordEncoder passwordEncoder, PermissionsRepository permissionsRepository,
+                         DishRepository dishRepository, OrderRepository orderRepository) {
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.permissionsRepository = permissionsRepository;
+        this.dishRepository = dishRepository;
+        this.orderRepository = orderRepository;
     }
     @Override
     public void run(String... args) throws Exception {
@@ -78,6 +86,25 @@ public class BootstrapData implements CommandLineRunner {
         this.permissionsRepository.save(permissions7);
         this.permissionsRepository.save(permissions8);
 
+
+        Dish dish1 = new Dish();
+        dish1.setName("Burek");
+        dish1.setDescription("Lepo");
+        dish1.setPrice(100);
+
+        Dish dish2 = new Dish();
+        dish2.setName("Sarma");
+        dish2.setDescription("Lepo");
+        dish2.setPrice(100);
+        this.dishRepository.save(dish1);
+        this.dishRepository.save(dish2);
+
+        Order order = new Order();
+        order.setStatus(Status.ORDERED);
+        order.setActive(true);
+        order.setCreatedBy(user1);
+
+        this.orderRepository.save(order);
 
 
 
