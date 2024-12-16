@@ -1,10 +1,7 @@
 package com.example.Domaci_3.bootstrap;
 
 import com.example.Domaci_3.model.*;
-import com.example.Domaci_3.repositories.DishRepository;
-import com.example.Domaci_3.repositories.OrderRepository;
-import com.example.Domaci_3.repositories.PermissionsRepository;
-import com.example.Domaci_3.repositories.UserRepository;
+import com.example.Domaci_3.repositories.*;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -12,6 +9,9 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -24,15 +24,17 @@ public class BootstrapData implements CommandLineRunner {
     private final PermissionsRepository permissionsRepository;
     private final DishRepository dishRepository;
     private final OrderRepository orderRepository;
+    private final ErrorRepository errorRepository;
 
     @Autowired
     public BootstrapData(UserRepository userRepository, PasswordEncoder passwordEncoder, PermissionsRepository permissionsRepository,
-                         DishRepository dishRepository, OrderRepository orderRepository) {
+                         DishRepository dishRepository, OrderRepository orderRepository, ErrorRepository errorRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.permissionsRepository = permissionsRepository;
         this.dishRepository = dishRepository;
         this.orderRepository = orderRepository;
+        this.errorRepository = errorRepository;
     }
     @Override
     public void run(String... args) throws Exception {
@@ -103,8 +105,16 @@ public class BootstrapData implements CommandLineRunner {
         order.setStatus(Status.ORDERED);
         order.setActive(true);
         order.setCreatedBy(user1);
+        order.setCreatedAt(LocalDateTime.now());
 
         this.orderRepository.save(order);
+
+        ErrorMessage errorMessage = new ErrorMessage();
+        errorMessage.setStatus(Status.DELIVERED);
+        errorMessage.setMessageDescription("GRESKA");
+        errorMessage.setTimestamp(LocalDateTime.now());
+        errorMessage.setOrder(order);
+        this.errorRepository.save(errorMessage);
 
 
 

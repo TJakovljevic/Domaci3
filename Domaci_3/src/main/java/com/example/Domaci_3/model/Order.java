@@ -7,13 +7,14 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @Entity
 @Table(name = "orders")
-
 public class Order {
 
     @Id
@@ -30,6 +31,13 @@ public class Order {
 
     @Column(nullable = false)
     private boolean active;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<ErrorMessage> errors;
 
     @ManyToMany
     @JoinTable(
