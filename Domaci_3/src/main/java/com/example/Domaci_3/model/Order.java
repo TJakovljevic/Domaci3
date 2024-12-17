@@ -35,9 +35,12 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonIgnore
     private List<ErrorMessage> errors;
+
+    @Version
+    private Integer version = 0;
 
     @ManyToMany
     @JoinTable(

@@ -14,6 +14,8 @@ import java.util.List;
 public interface OrderRepository extends CrudRepository<Order, Long> {
 
     public List<Order> findByCreatedBy(User createdBy);
+
+    public int countByStatusIn(List<Status> status);
     public List<Order> findByStatus(Status status);
 
     @Query("SELECT o FROM Order o WHERE " +

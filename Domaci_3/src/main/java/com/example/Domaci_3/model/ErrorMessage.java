@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "errorMessage")
+@Table(name = "error_message")
 public class ErrorMessage {
 
     @Id
@@ -19,7 +19,7 @@ public class ErrorMessage {
 
     @ManyToOne()
     @JoinColumn(name="order_id", nullable = false)
-    private Order order;
+    private Order orderEntity;
 
     @Column(nullable = false)
     private String messageDescription;
