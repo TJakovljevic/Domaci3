@@ -10,6 +10,9 @@ import { EditUsersComponent } from './components/users/edit-users/edit-users.com
 import {FormsModule} from "@angular/forms";
 import { HomeComponent } from './components/home/home.component';
 import {HttpClientModule} from "@angular/common/http";
+import { SearchComponent } from './components/search/search.component';
+import { OrderComponent } from './components/order/order.component';
+import { ErrorComponent } from './components/error/error.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +21,10 @@ import {HttpClientModule} from "@angular/common/http";
     TableUsersComponent,
     CreateUsersComponent,
     EditUsersComponent,
-    HomeComponent
+    HomeComponent,
+    SearchComponent,
+    OrderComponent,
+    ErrorComponent
   ],
   imports: [
     BrowserModule,

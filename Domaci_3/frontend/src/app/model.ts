@@ -31,3 +31,15 @@ export interface PermissionDto{
 interface PermissionsResponse {
   permissions: Permission[];
 }
+
+interface Order{
+
+}
+
+interface Error{
+
+}
+
+interface Dish{
+
+}

@@ -68,60 +68,6 @@ public class OrderService implements IService<Order, Long>{
 
     }
 
-    //Neka random deviacija od 5 sekundi
-    private int getDeviation(int baseSeconds) {
-        return ThreadLocalRandom.current().nextInt(-5, 6) + baseSeconds;
-    }
-//    @Scheduled(fixedRate = 5000)
-//    @Transactional
-//    public void processOrderStatus(){
-//        //ORDERED -> PREPARING
-//        List<Order> orderedOrders = this.orderRepository.findByStatus(Status.ORDERED);
-//        for(Order order: orderedOrders){
-//
-//        }
-//    }
-
-
-//    @Scheduled(fixedRate = 1000) //2 sec
-//    public void checkAndUpdateStatus(){
-//
-//        List<Order> orders = (List<Order>) this.orderRepository.findAll();
-//        // Transition orders from ORDERED -> PREPARING
-//        for (Order order : orders) {
-//            if (!order.isActive()) {
-//                continue;
-//            }
-//            if (order.getStatus().equals(Status.ORDERED) && order.getCreatedAt().plusSeconds(10).isBefore(LocalDateTime.now())) {
-//                order.setStatus(Status.PREPARING);
-//                orderRepository.save(order);
-//            }
-//        }
-//
-//        // Transition orders from PREPARING -> IN_DELIVERY
-//        for (Order order : orders) {
-//            if (!order.isActive()) {
-//                continue;
-//            }
-//            if (order.getStatus().equals(Status.PREPARING) && order.getCreatedAt().plusSeconds(15).isBefore(LocalDateTime.now())) {
-//                order.setStatus(Status.IN_DELIVERY);
-//                orderRepository.save(order);
-//            }
-//        }
-//
-//        // Transition orders from IN_DELIVERY -> DELIVERED
-//        for (Order order : orders) {
-//            if (!order.isActive()) {
-//                continue;
-//            }
-//            if (order.getStatus().equals(Status.IN_DELIVERY) && order.getCreatedAt().plusSeconds(20).isBefore(LocalDateTime.now())) {
-//                order.setStatus(Status.DELIVERED);
-//                orderRepository.save(order);
-//            }
-//        }
-//
-//    }
-
 
     @Scheduled(fixedRate = 5000) // Runs every 5 seconds
     public void updateOrderStates() {
