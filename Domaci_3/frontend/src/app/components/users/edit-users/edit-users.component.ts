@@ -13,7 +13,6 @@ import {PermissionsService} from "../../../services/permissions.service";
 export class EditUsersComponent implements OnInit {
 
   route_id: string = "";
-  current_user: string = "";
 
   user: UserDto = {
     first_name: '',
@@ -41,7 +40,6 @@ export class EditUsersComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.getUser();
     this.fetchPermissions();
     this.loadData();
   }
@@ -59,8 +57,8 @@ export class EditUsersComponent implements OnInit {
 
 
   fetchPermissions(){
-    console.log(this.current_user)
-    this.permissionsService.fetchPermissions(this.current_user).
+
+    this.permissionsService.fetchPermissions().
     subscribe(
       (response: Permission[]) => {
         this.permissions = response;
@@ -75,15 +73,6 @@ export class EditUsersComponent implements OnInit {
     );
   }
 
-  getUser(){
-    const token = localStorage.getItem("authToken")
-    if (token != null) {
-
-      const decodedToken = JSON.parse(atob(token.split('.')[1]));
-      this.current_user = decodedToken.sub || "Guest";
-      console.log(this.current_user);
-    }
-  }
 
   canUpdateCheck(){
     if (!this.canUpdateUsers) {

@@ -8,6 +8,9 @@
           <div *ngIf="canCreateUsers">
             <a [routerLink]="'/create-user'" class="nav-link active" aria-current="page">Create Users</a>
           </div>
+            <a [routerLink]="'/order'" class="nav-link active" aria-current="page">Create Order</a>
+            <a [routerLink]="'/search'" class="nav-link active" aria-current="page">Search Order</a>
+            <a [routerLink]="'/error'" class="nav-link active" aria-current="page">Errors</a>
           <a [routerLink]="'/login'" class="nav-link active" aria-current="page">Login</a>
           <div class="ms-auto">
             <span class="nav-link">User email:  {{current_user}}</span>

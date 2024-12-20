@@ -1,7 +1,9 @@
 package com.example.Domaci_3.services;
 
 import com.example.Domaci_3.model.Dish;
+import com.example.Domaci_3.model.User;
 import com.example.Domaci_3.repositories.DishRepository;
+import com.example.Domaci_3.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import java.util.List;

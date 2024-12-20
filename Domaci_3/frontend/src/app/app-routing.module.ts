@@ -6,6 +6,9 @@ import {CreateUsersComponent} from "./components/users/create-users/create-users
 import {TableUsersComponent} from "./components/users/table-users/table-users.component";
 import {EditUsersComponent} from "./components/users/edit-users/edit-users.component";
 import {AuthGuard} from "./auth.guard";
+import {ErrorComponent} from "./components/orders/error/error.component";
+import {OrderComponent} from "./components/orders/order/order.component";
+import {SearchComponent} from "./components/orders/search/search.component";
 
 const routes: Routes = [
   {
@@ -28,11 +31,30 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     canDeactivate: [AuthGuard]
   },
-  { path: 'edit-user/:id',
+  {
+    path: 'edit-user/:id',
     component: EditUsersComponent,
     canActivate: [AuthGuard],
     canDeactivate: [AuthGuard]
   },
+  {
+    path: 'error',
+    component: ErrorComponent,
+    canActivate: [AuthGuard],
+    canDeactivate: [AuthGuard]
+  },
+  {
+    path: 'order',
+    component: OrderComponent,
+    canActivate: [AuthGuard],
+    canDeactivate: [AuthGuard]
+  },
+  {
+    path: 'search',
+    component: SearchComponent,
+    canActivate: [AuthGuard],
+    canDeactivate: [AuthGuard]
+  }
 
 ];
 

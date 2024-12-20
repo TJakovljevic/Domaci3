@@ -14,7 +14,6 @@ export class CreateUsersComponent implements OnInit{
 
 
   canCreateUsers: boolean = false;
-  current_user: string = "";
   permissions: Permission[] = [];
 
 
@@ -44,15 +43,13 @@ export class CreateUsersComponent implements OnInit{
   errorMessage: string = '';
 
   ngOnInit(): void {
-    this.getUser();
     this.fetchPermissions();
     this.fetchAllPermissions();
 
   }
 
   fetchPermissions(){
-    console.log(this.current_user)
-    this.permissionsService.fetchPermissions(this.current_user).
+    this.permissionsService.fetchPermissions().
     subscribe(
       (response: Permission[]) => {
         this.permissions = response;
@@ -68,16 +65,6 @@ export class CreateUsersComponent implements OnInit{
 
   }
 
-
-  getUser(){
-    const token = localStorage.getItem("authToken")
-    if (token != null) {
-
-      const decodedToken = JSON.parse(atob(token.split('.')[1]));
-      this.current_user = decodedToken.sub || "Guest";
-      console.log(this.current_user);
-    }
-  }
 
   canCreateCheck(){
     if(!this.canCreateUsers){

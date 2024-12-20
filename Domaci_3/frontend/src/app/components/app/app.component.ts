@@ -39,8 +39,7 @@ export class AppComponent implements OnInit{
   }
 
   fetchPermissions(){
-    console.log(this.current_user)
-    this.permissionsService.fetchPermissions(this.current_user).
+    this.permissionsService.fetchPermissions().
     subscribe(
       (response: Permission[]) => {
         this.permissions = response;

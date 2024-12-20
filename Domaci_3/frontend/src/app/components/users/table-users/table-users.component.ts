@@ -16,7 +16,6 @@ export class TableUsersComponent implements OnInit {
 
 
     users: User[] = []
-    current_user: string = "";
     canReadUsers: boolean = false;
     canCreateUsers: boolean = false;
     canUpdateUsers: boolean = false;
@@ -51,22 +50,11 @@ export class TableUsersComponent implements OnInit {
 
 
     ngOnInit(): void {
-      this.getUser()
       this.fetchPermissions()
 
-
-
   }
 
-  getUser(){
-    const token = localStorage.getItem("authToken")
-    if (token != null) {
 
-      const decodedToken = JSON.parse(atob(token.split('.')[1]));
-      this.current_user = decodedToken.sub || "Guest";
-      console.log(this.current_user);
-    }
-  }
   canReadCheck(){
     if (this.canReadUsers) {
       this.tableUsersService.fetchUsers().subscribe(
@@ -83,8 +71,7 @@ export class TableUsersComponent implements OnInit {
     }
   }
   fetchPermissions(){
-      console.log(this.current_user)
-    this.permissionsService.fetchPermissions(this.current_user).
+    this.permissionsService.fetchPermissions().
     subscribe(
       (response: Permission[]) => {
         this.permissions = response;

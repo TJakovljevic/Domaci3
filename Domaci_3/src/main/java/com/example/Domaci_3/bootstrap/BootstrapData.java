@@ -107,14 +107,14 @@ public class BootstrapData implements CommandLineRunner {
         order.setCreatedBy(user1);
         order.setCreatedAt(LocalDateTime.now());
 
-        this.orderRepository.save(order);
+        Order existingOrder = this.orderRepository.save(order);
 
-//        ErrorMessage errorMessage = new ErrorMessage();
-//        errorMessage.setStatus(Status.DELIVERED);
-//        errorMessage.setMessageDescription("GRESKA");
-//        errorMessage.setTimestamp(LocalDateTime.now());
-//        errorMessage.setOrder(order);
-//        this.errorRepository.save(errorMessage);
+        ErrorMessage errorMessage = new ErrorMessage();
+        errorMessage.setStatus(Status.DELIVERED);
+        errorMessage.setMessageDescription("GRESKA");
+        errorMessage.setTimestamp(LocalDateTime.now());
+        errorMessage.setOrderEntity(existingOrder);
+        this.errorRepository.save(errorMessage);
 
 
 

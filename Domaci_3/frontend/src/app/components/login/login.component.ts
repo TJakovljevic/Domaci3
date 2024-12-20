@@ -14,7 +14,6 @@ export class LoginComponent implements OnInit{
   password: string = "";
   results: string = "";
   token: string | null = null;
-  current_user: string = "";
   permissions: Permission[] = [];
 
   canReadUsers: boolean = false;
@@ -56,7 +55,6 @@ export class LoginComponent implements OnInit{
     this.token = localStorage.getItem("authToken")
   console.log("Permissions: " + this.token)
     if(this.token){
-          this.getUser()
           this.fetchPermissions()
         }
     }
@@ -67,27 +65,15 @@ export class LoginComponent implements OnInit{
     subscribe(
       response=>{
         this.results = response.jwt;
-        // this.getUser()
-        console.log(this.current_user)
         console.log("Login successful: " + this.results)
       },
       error => {
         console.error('Error fetching detection data:', error);
       });
   }
-  getUser(){
-    const token = localStorage.getItem("authToken")
-    if (token != null) {
-
-      const decodedToken = JSON.parse(atob(token.split('.')[1]));
-      this.current_user = decodedToken.sub || "Guest";
-      console.log(this.current_user);
-    }
-  }
 
   fetchPermissions(){
-    console.log("Current user: " + this.current_user)
-    this.permissionsService.fetchPermissions(this.current_user).
+    this.permissionsService.fetchPermissions().
     subscribe(
       (response: Permission[]) => {
         this.permissions = response;

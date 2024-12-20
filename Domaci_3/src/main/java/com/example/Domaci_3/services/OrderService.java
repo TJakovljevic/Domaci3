@@ -34,6 +34,12 @@ public class OrderService implements IService<Order, Long>{
 
     private static final int MAX_ORDERS = 3;
 
+
+    //Dodace se messagingTemplate koji ce da slusa kod update ordera i ukoliko je doslo do change statusa slace update
+    //sa novim statusom, na frontu mogu da odradim novi model koji ce hvatati order.id i order.Status, tu porudzbinu nadjem preko
+    //neke funkcije sa id-jem i izmenim mu status
+
+
     public OrderService(@Qualifier("orderRepository") OrderRepository orderRepository, @Qualifier("userRepository") UserRepository userRepository,
                         ErrorRepository errorRepository, DishRepository dishRepository, TaskScheduler taskScheduler){
         this.orderRepository = orderRepository;
@@ -79,10 +85,14 @@ public class OrderService implements IService<Order, Long>{
     }
     @Async
     public CompletableFuture<Order> scheduleOrder(ScheduleOrderDto scheduleOrderDto){
+
         Order order = new Order();
         order.setId(scheduleOrderDto.getId());
         order.setStatus(Status.ORDERED);
-        order.setCreatedBy(scheduleOrderDto.getCreatedBy());
+
+        User user = this.userRepository.findByEmail(scheduleOrderDto.getCreatedBy().getEmail());
+        order.setCreatedBy(user);
+
         order.setActive(scheduleOrderDto.isActive());
         List<Dish> dishes = this.dishRepository.findAllById(scheduleOrderDto.getDishes());
         order.setDishes(dishes);
@@ -135,13 +145,10 @@ public class OrderService implements IService<Order, Long>{
         int hour = dateTime.getHour();      // Hour (0-23)
         int dayOfMonth = dateTime.getDayOfMonth();  // Day of Month (1-31)
         int month = dateTime.getMonthValue();       // Month (1-12)
-        int year = dateTime.getYear();     // Year
 
         return String.format("%d %d %d %d %d ?",
                 second, minute, hour, dayOfMonth, month);
     }
-
-
 
 
     public long countOrders(List<Status> status){
@@ -150,6 +157,8 @@ public class OrderService implements IService<Order, Long>{
 
     @Override
     public <S extends Order> S save(S order) {
+        User user = this.userRepository.findByEmail(order.getCreatedBy().getEmail());
+        order.setCreatedBy(user);
         return this.orderRepository.save(order);
     }
 

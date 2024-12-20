@@ -26,20 +26,49 @@ export interface Permission{
 }
 
 export interface PermissionDto{
-  id:number;
+  id: number;
 }
-interface PermissionsResponse {
+export interface PermissionsResponse {
   permissions: Permission[];
 }
 
-interface Order{
 
+
+export interface ErrorMessage {
+  id: number;
+  messageDescription: string;
+  status: string;
+  orderEntity?: OrderEntity;
 }
 
-interface Error{
+interface OrderEntity {
+  id: number;
+  status: string;
+  active: boolean;
+  createdAt: string;
+  dishes: Dish[];
+  createdBy: UserDto;
+}
+//Bukv user samo bez liste permisija
 
+export interface PaginatedResponse {
+  content: ErrorMessage[];
+  pageable: any;
+  last: boolean;
+  totalPages: number;
+  totalElements: number;
+  size: number;
+  number: number;
+  sort: any;
+  first: boolean;
+  numberOfElements: number;
+  empty: boolean;
 }
 
-interface Dish{
-
+export interface Dish{
+  id: number;
+  name: string;
+  description: string;
+  price: number;
 }
+
