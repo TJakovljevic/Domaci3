@@ -43,6 +43,10 @@ public class UserService implements UserDetailsService,IService<User, Long>  {
         return user.getPermissions();
     }
 
+    public boolean isUserAdmin(String email){
+        User user = userRepository.findByEmail(email);
+        return user.isAdmin();
+    }
 
     @Override
     public <S extends User> S save(S user) {

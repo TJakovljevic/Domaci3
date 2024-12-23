@@ -42,8 +42,8 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
             );
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            List<Permissions> permissions = userService.getUserPermissions(userDetails.getUsername());
-            String jwtToken = jwtUtil.generateToken(permissions, userDetails.getUsername());
+            boolean admin = this.userService.isUserAdmin(userDetails.getUsername());
+            String jwtToken = jwtUtil.generateToken(userDetails.getUsername(), admin);
             return ResponseEntity.ok(new LoginResponse(jwtToken));
         } catch (Exception e) {
             e.printStackTrace();

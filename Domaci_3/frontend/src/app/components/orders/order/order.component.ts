@@ -41,11 +41,11 @@ export class OrderComponent implements OnInit {
 
   }
 
-  togglePermission(permissionId: number) {
-    if (this.selectedDishes.has(permissionId)) {
-      this.selectedDishes.delete(permissionId);
+  toggleDishes(dishId: number) {
+    if (this.selectedDishes.has(dishId)) {
+      this.selectedDishes.delete(dishId);
     } else {
-      this.selectedDishes.add(permissionId);
+      this.selectedDishes.add(dishId);
     }
   }
 
@@ -53,7 +53,7 @@ export class OrderComponent implements OnInit {
     if (this.can_place_order) {
       this.fetchMenu();
     }else{
-      alert("You don't have the permission to read user data!")
+      alert("You don't have the permission to create orders!")
       this.router.navigate([''])
     }
   }

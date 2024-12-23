@@ -41,7 +41,7 @@ export interface ErrorMessage {
   orderEntity?: OrderEntity;
 }
 
-interface OrderEntity {
+export interface OrderEntity {
   id: number;
   status: string;
   active: boolean;
@@ -70,5 +70,17 @@ export interface Dish{
   name: string;
   description: string;
   price: number;
+}
+
+export interface Search{
+  email: string | null;
+  status: String[];
+  dateFrom: string;
+  dateTo: string;
+}
+
+export interface StatusUpdate {
+  orderId: number;
+  status: string;
 }
 

@@ -1,1 +1,84 @@
-<p>search works!</p>
+<form (ngSubmit)="searchOrders()" #searchForm="ngForm" class="mb-4">
+    <div class="row">
+
+        <div class="col-md-4" *ngIf="isAdmin">
+            <label for="userId" class="form-label">User</label>
+            <select id="userId" name="userId" class="form-select" [(ngModel)]="email">
+                <option value="" disabled selected>Select a user</option>
+                <option *ngFor="let user of users" [value]="user.email">
+                    {{ user.email }}
+                </option>
+            </select>
+        </div>
+
+
+        <div class="col-md-4">
+            <div class="form-check" *ngFor="let statusOption of statusOptions">
+                <input
+                        type="checkbox"
+                        class="form-check-input"
+                        [id]="statusOption"
+                        [value]="statusOption"
+                        (change)="toggleStatuses(statusOption)"
+                        [checked]="status.has(statusOption)"
+                />
+                <label class="form-check-label" [for]="statusOption">
+                    {{ statusOption }}
+                </label>
+            </div>
+        </div>
+
+        <!-- Date Range Filters -->
+        <div class="col-md-4">
+            <label for="dateFrom" class="form-label">Date From</label>
+            <input type="datetime-local" id="dateFrom" name="dateFrom" class="form-control" [(ngModel)]="dateFrom">
+        </div>
+        <div class="col-md-4 mt-3">
+            <label for="dateTo" class="form-label">Date To</label>
+            <input type="datetime-local" id="dateTo" name="dateTo" class="form-control" [(ngModel)]="dateTo">
+        </div>
+
+        <!-- Search Button -->
+        <div class="col-md-4 mt-3 align-self-end">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+        </div>
+
+        <div class="col-md-4 mt-3 align-self-end">
+            <button *ngIf="can_track_order"
+                    type="button"
+                    class="btn btn-primary w-100"
+                    id="trackButton"
+                    (click)="connect()"
+            >
+                Track
+            </button>
+        </div>
+    </div>
+</form>
+
+<!-- Orders Table -->
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>User ID</th>
+            <th>Status</th>
+            <th>Created At</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let order of orders">
+            <td>{{ order.id }}</td>
+            <td>{{ order.createdAt }}</td>
+            <td>{{ order.status }}</td>
+            <td>{{ order.createdAt }}</td>
+            <button *ngIf="can_cancel_order && order.status == 'ORDERED' && can_track_order" class="btn btn-danger btn-sm" (click)="cancelOrder(order.id)">
+                Cancel
+            </button>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+

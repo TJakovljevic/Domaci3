@@ -46,6 +46,8 @@ public class BootstrapData implements CommandLineRunner {
         user1.setEmail("123@gmail.com");
         user1.setPassword(this.passwordEncoder.encode("123"));
         user1.setAdmin(true);
+
+
         this.userRepository.save(user1);
 
         Permissions permissions = new Permissions();
@@ -87,6 +89,10 @@ public class BootstrapData implements CommandLineRunner {
         this.permissionsRepository.save(permissions6);
         this.permissionsRepository.save(permissions7);
         this.permissionsRepository.save(permissions8);
+
+
+
+
 
 
         Dish dish1 = new Dish();

@@ -3,21 +3,24 @@ package com.example.Domaci_3.controllers;
 import com.example.Domaci_3.dto.OrderDto;
 import com.example.Domaci_3.dto.ScheduleOrderDto;
 import com.example.Domaci_3.dto.SearchOrderDto;
-import com.example.Domaci_3.model.Dish;
-import com.example.Domaci_3.model.ErrorMessage;
-import com.example.Domaci_3.model.Order;
-import com.example.Domaci_3.model.Status;
+import com.example.Domaci_3.model.*;
 import com.example.Domaci_3.repositories.DishRepository;
 import com.example.Domaci_3.repositories.ErrorRepository;
 import com.example.Domaci_3.services.DishService;
 import com.example.Domaci_3.services.OrderService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -65,6 +68,13 @@ public class OrderController {
         return this.orderService.searchOrder(searchOrderDto);
     }
 
+
+//    @MessageMapping("/updateOrder")
+//    @SendTo("/topic/orders")
+//    public Message send(@Payload Message update) {
+//        System.out.println("OVDEEEE");
+//        return update;
+//    }
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order placeOrder(@RequestBody OrderDto orderDto) {
 

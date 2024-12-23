@@ -20,8 +20,11 @@ public interface OrderRepository extends CrudRepository<Order, Long> {
 
     @Query("SELECT o FROM Order o WHERE " +
             "(:status IS NULL OR  o.status IN :status) AND " +
-            "(:dateFrom IS NOT NULL AND :dateTo IS NOT NULL AND o.createdAt >= :dateFrom AND o.createdAt <= :dateTo) AND " +
+            "(:dateFrom IS NULL OR o.createdAt >= :dateFrom) AND " +
+            "(:dateTo IS NULL OR o.createdAt <= :dateTo) AND " +
             "(:userId IS NULL OR o.createdBy.id = :userId)")
     public List<Order> searchOrders(Long userId, List<String> status, LocalDateTime dateFrom, LocalDateTime dateTo);
+
+
 
 }

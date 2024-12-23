@@ -28,11 +28,11 @@ public class JwtUtil {
         return extractAllClaims(token).getExpiration().before(new Date());
     }
 
-    public String generateToken(List<Permissions> permissions, String username){
+    public String generateToken(String username, boolean admin){
         Map<String, Object> claims = new HashMap<>();
-        claims.put("permissions", permissions);
+        claims.put("admin", admin);
         return Jwts.builder()
-//                .setClaims(claims)
+                .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))

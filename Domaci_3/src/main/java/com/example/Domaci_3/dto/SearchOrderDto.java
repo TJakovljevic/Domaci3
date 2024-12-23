@@ -11,15 +11,7 @@ public class SearchOrderDto {
     private List<String> status;
     private LocalDateTime dateFrom;
     private LocalDateTime dateTo;
-    private Long userId;
+    private String email;
 
-    @Override
-    public String toString() {
-        return "SearchOrderDto{" +
-                "status=" + status +
-                ", dateFrom=" + dateFrom +
-                ", dateTo=" + dateTo +
-                ", userId=" + userId +
-                '}';
-    }
+
 }

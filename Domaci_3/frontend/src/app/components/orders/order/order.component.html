@@ -10,7 +10,7 @@
                         [id]="dish.id"
                         [value]="dish.id"
                         [checked]="selectedDishes.has(dish.id)"
-                        (change)="togglePermission(dish.id)"
+                        (change)="toggleDishes(dish.id)"
                 />
                 <label [for]="dish.id">{{ dish.name }} - {{ dish.price }} RSD</label>
             </div>

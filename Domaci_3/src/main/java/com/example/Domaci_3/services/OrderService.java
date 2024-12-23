@@ -8,6 +8,7 @@ import com.example.Domaci_3.repositories.ErrorRepository;
 import com.example.Domaci_3.repositories.OrderRepository;
 import com.example.Domaci_3.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -28,9 +30,9 @@ public class OrderService implements IService<Order, Long>{
     private final UserRepository userRepository;
     private final ErrorRepository errorRepository;
     private final DishRepository dishRepository;
+    private final SimpMessagingTemplate messagingTemplate;
     private TaskScheduler taskScheduler;
 
-    private LocalDateTime taskTime;
 
     private static final int MAX_ORDERS = 3;
 
@@ -41,12 +43,13 @@ public class OrderService implements IService<Order, Long>{
 
 
     public OrderService(@Qualifier("orderRepository") OrderRepository orderRepository, @Qualifier("userRepository") UserRepository userRepository,
-                        ErrorRepository errorRepository, DishRepository dishRepository, TaskScheduler taskScheduler){
+                        ErrorRepository errorRepository, DishRepository dishRepository, TaskScheduler taskScheduler, SimpMessagingTemplate simpMessagingTemplate){
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.errorRepository = errorRepository;
         this.dishRepository = dishRepository;
         this.taskScheduler = taskScheduler;
+        this.messagingTemplate = simpMessagingTemplate;
     }
 
     public List<Order> getUserOrders(String email){
@@ -58,16 +61,26 @@ public class OrderService implements IService<Order, Long>{
 
 
 
+
     //NA frontu cu da prikazem id ako je admin ako nije nema searcha po adminu
     public List<Order> searchOrder(SearchOrderDto searchOrderDto) {
-        Long userId = searchOrderDto.getUserId();
+        System.out.println("Search body" + searchOrderDto);
+        Long userId = null;
+        if(!searchOrderDto.getEmail().isEmpty()) {
+            User user = this.userRepository.findByEmail(searchOrderDto.getEmail());
+            userId = user.getId();
+        }
+
         List<String> status = searchOrderDto.getStatus();
         LocalDateTime dateFrom = searchOrderDto.getDateFrom();
         LocalDateTime dateTo = searchOrderDto.getDateTo();
 
+
         if (status != null && status.isEmpty()) {
             status = null;
         }
+
+        System.out.println("User: " + userId + ", " + "status: " + status + ", " + "dateFrom: " + dateFrom + ", dateTo: " + dateTo);
 
         return orderRepository.searchOrders(userId, status, dateFrom, dateTo);
 
@@ -113,31 +126,49 @@ public class OrderService implements IService<Order, Long>{
 
     @Async
     @Transactional
-    public void processOrderAsync(Order order) {
-        switch (order.getStatus()) {
+    public synchronized void processOrderAsync(Order order) {
+
+        //ako menjam onda samo umesto ovog freshOrdera stavim ovaj order od gore
+
+        Order freshOrder = orderRepository.findById(order.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+
+        List<StatusUpdate> updates = new ArrayList<>();
+
+        switch (freshOrder.getStatus()) {
             case ORDERED:
-                if (order.getCreatedAt().plusSeconds(10).isBefore(LocalDateTime.now())) {
-                    order.setStatus(Status.PREPARING);
-                    orderRepository.save(order);
-                    System.out.println("Order " + order.getId() + " is now PREPARING");
+                if (freshOrder.getCreatedAt().plusSeconds(10).isBefore(LocalDateTime.now())) {
+                    freshOrder.setStatus(Status.PREPARING);
+                    orderRepository.save(freshOrder);
+                    updates.add(new StatusUpdate(order.getId(), Status.PREPARING.name()));
+                    System.out.println("Order " + freshOrder.getId() + " is now PREPARING");
                 }
                 break;
             case PREPARING:
-                if (order.getCreatedAt().plusSeconds(25).isBefore(LocalDateTime.now())) { // 10s + 15s
-                    order.setStatus(Status.IN_DELIVERY);
-                    orderRepository.save(order);
-                    System.out.println("Order " + order.getId() + " is now IN_DELIVERY");
+                if (freshOrder.getCreatedAt().plusSeconds(25).isBefore(LocalDateTime.now())) { // 10s + 15s
+                    freshOrder.setStatus(Status.IN_DELIVERY);
+                    orderRepository.save(freshOrder);
+                    updates.add(new StatusUpdate(order.getId(), Status.IN_DELIVERY.name()));
+                    System.out.println("Order " + freshOrder.getId() + " is now IN_DELIVERY");
                 }
                 break;
             case IN_DELIVERY:
-                if (order.getCreatedAt().plusSeconds(45).isBefore(LocalDateTime.now())) { // 10s + 15s + 20s
-                    order.setStatus(Status.DELIVERED);;
-                    orderRepository.save(order);
-                    System.out.println("Order " + order.getId() + " is now DELIVERED");
+                if (freshOrder.getCreatedAt().plusSeconds(45).isBefore(LocalDateTime.now())) { // 10s + 15s + 20s
+                    freshOrder.setStatus(Status.DELIVERED);
+                    orderRepository.save(freshOrder);
+                    updates.add(new StatusUpdate(order.getId(), Status.DELIVERED.name()));;
+                    System.out.println("Order " + freshOrder.getId() + " is now DELIVERED");
                 }
                 break;
         }
+
+        if (!updates.isEmpty()) {
+            updates.forEach(update -> messagingTemplate.convertAndSend("/topic/orders", update));
+            System.out.println("Updates");
+        }
     }
+
 
     public static String cronConverter(LocalDateTime dateTime) {
         int second = dateTime.getSecond();  // Seconds (0-59)
