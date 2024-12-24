@@ -44,13 +44,24 @@
         </div>
 
         <div class="col-md-4 mt-3 align-self-end">
-            <button *ngIf="can_track_order"
+            <button *ngIf="can_track_order && !isConnected"
                     type="button"
                     class="btn btn-primary w-100"
                     id="trackButton"
                     (click)="connect()"
             >
                 Track
+            </button>
+        </div>
+
+        <div class="col-md-4 mt-3 align-self-end">
+            <button *ngIf="can_track_order && isConnected"
+                    type="button"
+                    class="btn btn-primary w-100"
+                    id="disconnectButton"
+                    (click)="disconnect()"
+            >
+                Disconnect
             </button>
         </div>
     </div>
@@ -81,4 +92,22 @@
         </tbody>
     </table>
 </div>
+
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage === 0">
+            <button class="page-link" (click)="pageChanged(currentPage - 1)" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </button>
+        </li>
+        <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index" [class.active]="i === currentPage">
+            <button class="page-link" (click)="pageChanged(i)">{{ i + 1 }}</button>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+            <button class="page-link" (click)="pageChanged(currentPage + 1)" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </button>
+        </li>
+    </ul>
+</nav>
 

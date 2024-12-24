@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {PermissionsService} from "../../../services/permissions.service";
 import {SearchService} from "../../../services/search.service";
-import {StatusUpdate, OrderEntity, Permission, User} from "../../../model";
+import {StatusUpdate, OrderEntity, Permission, User, PaginatedResponseOrder} from "../../../model";
 import {Router} from "@angular/router";
 import {CompatClient, Stomp} from "@stomp/stompjs";
 import * as SockJS from 'sockjs-client';
@@ -29,7 +29,9 @@ export class SearchComponent implements OnInit{
     stompClient: CompatClient;
     isConnected: boolean = false;
     messages: StatusUpdate[] = []
-
+    currentPage: number = 0;
+    itemsPerPage: number = 5;
+    totalPages: number = 0;
 
 
 connect(){
@@ -42,7 +44,17 @@ connect(){
 onConnect(frame: any){
     this.stompClient.subscribe('/topic/orders', this.addNewMessage.bind(this));
     this.isConnected = true;
+    alert("Tracking enabled")
     console.log('Connected: ' + frame);
+}
+
+disconnect() {
+    if(this.stompClient != null) {
+        this.stompClient.disconnect();
+    }
+    this.isConnected = false;
+    alert("Tracking disabled")
+    console.log("Disconnected");
 }
 
 addNewMessage(messageOutput: any) {
@@ -93,11 +105,16 @@ addNewMessage(messageOutput: any) {
 
   }
 
+    pageChanged(page: number): void {
+        this.currentPage = page;
+        this.searchOrders();
+    }
   cancelOrder(id: number){
         this.searchService.cancelOrder(id).subscribe(
             (response) => {
 
                 alert("Order successfully canceled")
+                window.location.reload()
             },
             (error) => {
                 alert("Error cancelling orders");
@@ -115,7 +132,7 @@ addNewMessage(messageOutput: any) {
 
   canSearchCheck(){
     if (this.can_search_order) {
-      this.fetchOrders();
+      this.searchOrders();
       this.fetchUsers()
     }else{
       alert("You don't have the permission to search orders!")
@@ -148,23 +165,7 @@ addNewMessage(messageOutput: any) {
   }
 
 
-  fetchOrders(){
-    this.searchService.fetchOrders().
-    subscribe(
-        (response: OrderEntity[]) => {
-          this.orders = response;
-          console.log(this.orders)
-
-
-        },
-        error => {
-          console.error('Error fetching orders:', error);
-        }
-    )
-  }
-
   searchOrders(){
-
 
 
     const body={
@@ -174,9 +175,10 @@ addNewMessage(messageOutput: any) {
       dateTo: this.dateTo
     }
 
-      this.searchService.searchOrder(body).subscribe(
-          (response: OrderEntity[]) => {
-              this.orders = response;
+      this.searchService.searchOrder(this.currentPage, this.itemsPerPage, body).subscribe(
+          (response: PaginatedResponseOrder) => {
+              this.orders = response.content;
+              this.totalPages = response.totalPages;
               console.log("Search Results: ", this.orders);
           },
           (error) => {

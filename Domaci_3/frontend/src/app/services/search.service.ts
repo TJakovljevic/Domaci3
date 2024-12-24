@@ -30,7 +30,7 @@ export class SearchService {
 
         return this.http.put(this.apiUrl+this.addedUrl+"/" +id,null, { headers });
     }
-    searchOrder(body: Search): Observable<any>{
+    searchOrder(page: number, size: number, body: Search): Observable<any>{
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${this.jwtToken}`  // Bearer token
         });
@@ -47,7 +47,7 @@ export class SearchService {
         console.log("Search body dateTo: " + body.dateTo);
         console.log("Search body dateFrom: " + body.dateFrom);
 
-        return this.http.post(this.apiUrl + this.addedUrl + "/search", body, { headers })
+        return this.http.post(`${this.apiUrl}${this.addedUrl}/search?page=${page}&size=${size}`, body, { headers })
     }
 
     fetchUsers(): Observable<any>{

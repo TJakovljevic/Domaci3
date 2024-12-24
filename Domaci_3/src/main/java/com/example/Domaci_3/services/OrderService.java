@@ -8,6 +8,9 @@ import com.example.Domaci_3.repositories.ErrorRepository;
 import com.example.Domaci_3.repositories.OrderRepository;
 import com.example.Domaci_3.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Async;
@@ -63,7 +66,30 @@ public class OrderService implements IService<Order, Long>{
 
 
     //NA frontu cu da prikazem id ako je admin ako nije nema searcha po adminu
-    public List<Order> searchOrder(SearchOrderDto searchOrderDto) {
+//    public List<Order> searchOrder(SearchOrderDto searchOrderDto) {
+//        System.out.println("Search body" + searchOrderDto);
+//        Long userId = null;
+//        if(!searchOrderDto.getEmail().isEmpty()) {
+//            User user = this.userRepository.findByEmail(searchOrderDto.getEmail());
+//            userId = user.getId();
+//        }
+//
+//        List<String> status = searchOrderDto.getStatus();
+//        LocalDateTime dateFrom = searchOrderDto.getDateFrom();
+//        LocalDateTime dateTo = searchOrderDto.getDateTo();
+//
+//
+//        if (status != null && status.isEmpty()) {
+//            status = null;
+//        }
+//
+//        System.out.println("User: " + userId + ", " + "status: " + status + ", " + "dateFrom: " + dateFrom + ", dateTo: " + dateTo);
+//
+//        return orderRepository.searchOrders(userId, status, dateFrom, dateTo);
+//
+//
+//    }
+    public Page<Order> searchOrder(Integer page, Integer size,SearchOrderDto searchOrderDto) {
         System.out.println("Search body" + searchOrderDto);
         Long userId = null;
         if(!searchOrderDto.getEmail().isEmpty()) {
@@ -82,7 +108,7 @@ public class OrderService implements IService<Order, Long>{
 
         System.out.println("User: " + userId + ", " + "status: " + status + ", " + "dateFrom: " + dateFrom + ", dateTo: " + dateTo);
 
-        return orderRepository.searchOrders(userId, status, dateFrom, dateTo);
+        return orderRepository.searchOrders(PageRequest.of(page, size, Sort.by("createdAt").descending()), userId, status, dateFrom, dateTo);
 
 
     }

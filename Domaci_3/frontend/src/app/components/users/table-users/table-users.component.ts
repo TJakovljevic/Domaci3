@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Permission, User} from "../../../model";
+import {PaginatedResponseUser, Permission, User} from "../../../model";
 import {TableUsersService} from "../../../services/table-users.service";
 import {Router} from "@angular/router";
 import {PermissionsService} from "../../../services/permissions.service";
@@ -21,6 +21,9 @@ export class TableUsersComponent implements OnInit {
     canUpdateUsers: boolean = false;
     canDeleteUsers: boolean = false;
     private permissions: Permission[] = []
+    currentPage: number = 0;
+    itemsPerPage: number = 5;
+    totalPages: number = 0;
 
 
   checkPermissions()
@@ -54,22 +57,31 @@ export class TableUsersComponent implements OnInit {
 
   }
 
+  fetchUsers(){
+      this.tableUsersService.fetchUsers(this.currentPage, this.itemsPerPage).subscribe(
+          (users: PaginatedResponseUser) => {
+              this.users = users.content;
+              this.totalPages = users.totalPages;
+          },
+          (error) => {
+              console.error(error);
+          }
+      );
+  }
 
   canReadCheck(){
     if (this.canReadUsers) {
-      this.tableUsersService.fetchUsers().subscribe(
-        (users) => {
-          this.users = users;
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
+        this.fetchUsers()
     }else{
       alert("You don't have the permission to read user data!")
       this.router.navigate([''])
     }
   }
+
+    pageChanged(page: number): void {
+        this.currentPage = page;
+        this.fetchUsers();
+    }
   fetchPermissions(){
     this.permissionsService.fetchPermissions().
     subscribe(

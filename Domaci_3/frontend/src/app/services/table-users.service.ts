@@ -16,13 +16,13 @@ export class TableUsersService {
 
   }
 
-  fetchUsers(): Observable<any>{
+  fetchUsers(page: number, size: number): Observable<any>{
     console.log("Token: " + this.jwtToken)
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.jwtToken}`  // Bearer token
     });
 
-      return this.http.get(this.apiUrl + this.addedUrl, { headers });
+    return this.http.get(`${this.apiUrl}${this.addedUrl}/paginate?page=${page}&size=${size}`, { headers });
   }
 
   deleteUser(id: number): Observable<any>{

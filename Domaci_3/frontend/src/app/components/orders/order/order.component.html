@@ -16,21 +16,22 @@
             </div>
         </div>
 
-        <div *ngIf="can_schedule_order" class="form-group">
-            <label for="orderDate">Select Order Date and Time</label>
-            <input
-                    type="datetime-local"
-                    id="orderDate"
-                    name="orderDate"
-                    [(ngModel)]="scheduledDate"
-                    class="form-control"
-                    required
-            />
-        </div>
+
 
         <button type="submit" class="btn btn-primary" [disabled]="!orderForm.valid">Order</button>
 
     </form>
+    <div *ngIf="can_schedule_order" class="form-group">
+        <label for="orderDate">Select Order Date and Time</label>
+        <input
+                type="datetime-local"
+                id="orderDate"
+                name="orderDate"
+                [(ngModel)]="scheduledDate"
+                class="form-control"
+                required
+        />
+    </div>
     <button *ngIf="can_schedule_order" class="btn btn-secondary" [disabled]="!scheduledDate" (click)="scheduleOrder()">
         Schedule Order
     </button>

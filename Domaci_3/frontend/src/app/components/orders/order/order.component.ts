@@ -87,7 +87,8 @@ export class OrderComponent implements OnInit {
     this.orderService.submitOrder(body).
     subscribe(
         (response) => {
-          console.log('Order submitted successfully', response);
+          alert('Order created successfully');
+          this.router.navigate(['']);
         },
         error => {
           console.error('Error submitting order:', error);
@@ -109,13 +110,15 @@ export class OrderComponent implements OnInit {
     this.orderService.scheduleOrder(body).
     subscribe(
         (response) => {
-          console.log('Order submitted successfully', response);
+          alert('Order scheduled successfully');
+          this.router.navigate(['']);
         },
         error => {
           console.error('Error submitting order:', error);
         }
     );
   }
+
 
   fetchMenu(){
     this.orderService.fetchMenu().subscribe

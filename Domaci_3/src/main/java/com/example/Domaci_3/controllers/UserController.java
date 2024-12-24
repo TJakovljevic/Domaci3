@@ -7,6 +7,7 @@ import com.example.Domaci_3.model.User;
 import com.example.Domaci_3.repositories.PermissionsRepository;
 import com.example.Domaci_3.services.OrderService;
 import com.example.Domaci_3.services.UserService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,6 +36,12 @@ public class UserController {
     public List<User> getAllUsers(){
         System.out.println("GetALLUsers");
         return userService.findAll();
+    }
+
+    @GetMapping(value="/paginate", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Page<User> getAllUsers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size){
+        System.out.println("GetALLUsers");
+        return this.userService.allUsers(page, size);
     }
 
 

@@ -8,6 +8,7 @@ import com.example.Domaci_3.repositories.DishRepository;
 import com.example.Domaci_3.repositories.ErrorRepository;
 import com.example.Domaci_3.services.DishService;
 import com.example.Domaci_3.services.OrderService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -63,18 +64,17 @@ public class OrderController {
 
     }
 
+//    @PostMapping(value="/search", consumes =  MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+//    public List<Order> searchOrder(@RequestBody SearchOrderDto searchOrderDto){
+//        return this.orderService.searchOrder(searchOrderDto);
+//    }
     @PostMapping(value="/search", consumes =  MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Order> searchOrder(@RequestBody SearchOrderDto searchOrderDto){
-        return this.orderService.searchOrder(searchOrderDto);
+    public Page<Order> searchOrder(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size, @RequestBody SearchOrderDto searchOrderDto){
+        return this.orderService.searchOrder(page, size, searchOrderDto);
     }
 
 
-//    @MessageMapping("/updateOrder")
-//    @SendTo("/topic/orders")
-//    public Message send(@Payload Message update) {
-//        System.out.println("OVDEEEE");
-//        return update;
-//    }
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order placeOrder(@RequestBody OrderDto orderDto) {
 

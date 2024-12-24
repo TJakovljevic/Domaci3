@@ -5,6 +5,8 @@ import com.example.Domaci_3.model.User;
 import com.example.Domaci_3.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -48,6 +50,10 @@ public class UserService implements UserDetailsService,IService<User, Long>  {
         return user.isAdmin();
     }
 
+
+    public Page<User> allUsers(Integer page, Integer size){
+        return this.userRepository.findAll(PageRequest.of(page, size));
+    }
     @Override
     public <S extends User> S save(S user) {
         return this.userRepository.save(user);

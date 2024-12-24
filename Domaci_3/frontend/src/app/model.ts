@@ -64,6 +64,33 @@ export interface PaginatedResponse {
   numberOfElements: number;
   empty: boolean;
 }
+export interface PaginatedResponseUser {
+  content: User[];
+  pageable: any;
+  last: boolean;
+  totalPages: number;
+  totalElements: number;
+  size: number;
+  number: number;
+  sort: any;
+  first: boolean;
+  numberOfElements: number;
+  empty: boolean;
+}
+
+export interface PaginatedResponseOrder {
+  content: OrderEntity[];
+  pageable: any;
+  last: boolean;
+  totalPages: number;
+  totalElements: number;
+  size: number;
+  number: number;
+  sort: any;
+  first: boolean;
+  numberOfElements: number;
+  empty: boolean;
+}
 
 export interface Dish{
   id: number;
