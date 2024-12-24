@@ -81,7 +81,7 @@ public class OrderController {
         long count = this.orderService.countOrders(List.of(Status.PREPARING, Status.IN_DELIVERY));
         System.out.println("Count: " + count);
         Order order = new Order();
-        if (count >= 1) {
+        if (count >= 3) {
 
 
 

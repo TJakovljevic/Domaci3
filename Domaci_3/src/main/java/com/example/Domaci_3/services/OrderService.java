@@ -115,9 +115,22 @@ public class OrderService implements IService<Order, Long>{
 
         CronTrigger cronTrigger = new CronTrigger(cronTime);
         this.taskScheduler.schedule(() -> {
-            order.setCreatedAt(LocalDateTime.now()); // da bi krenula da se pravi od trenutka kada je stigla na red
-            System.out.println("Saving order...");
-            this.orderRepository.save(order);
+            long count = this.countOrders(List.of(Status.PREPARING, Status.IN_DELIVERY));
+            if(count >= 3) {
+                order.setStatus(Status.CANCELED);
+                order.setActive(false);
+                ErrorMessage errorMessage = new ErrorMessage();
+                errorMessage.setTimestamp(LocalDateTime.now());
+                errorMessage.setMessageDescription("Maximum concurrent orders exceeded");
+                errorMessage.setStatus(Status.ORDERED);
+                Order savedOrder = this.orderRepository.save(order);
+                errorMessage.setOrderEntity(savedOrder);
+                this.errorRepository.save(errorMessage);
+            }else {
+                order.setCreatedAt(LocalDateTime.now());
+                System.out.println("Saving order...");
+                this.orderRepository.save(order);
+            }
         }, cronTrigger);
 
         return CompletableFuture.completedFuture(order);
