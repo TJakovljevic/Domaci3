@@ -114,7 +114,7 @@ public class OrderService implements IService<Order, Long>{
     }
 
 
-    @Scheduled(fixedRate = 5000) // Runs every 5 seconds
+    @Scheduled(fixedRate = 2000) // Runs every 5 seconds
     public void updateOrderStates() {
         List<Order> orders = (List<Order>) orderRepository.findAll();
 
@@ -141,10 +141,11 @@ public class OrderService implements IService<Order, Long>{
 
         CronTrigger cronTrigger = new CronTrigger(cronTime);
         this.taskScheduler.schedule(() -> {
-            long count = this.countOrders(List.of(Status.PREPARING, Status.IN_DELIVERY));
+            long count = this.countOrders(List.of(Status.ORDERED, Status.PREPARING, Status.IN_DELIVERY));
             if(count >= 3) {
                 order.setStatus(Status.CANCELED);
                 order.setActive(false);
+                order.setCreatedAt(LocalDateTime.now());
                 ErrorMessage errorMessage = new ErrorMessage();
                 errorMessage.setTimestamp(LocalDateTime.now());
                 errorMessage.setMessageDescription("Maximum concurrent orders exceeded");
@@ -195,6 +196,7 @@ public class OrderService implements IService<Order, Long>{
             case IN_DELIVERY:
                 if (freshOrder.getCreatedAt().plusSeconds(45).isBefore(LocalDateTime.now())) { // 10s + 15s + 20s
                     freshOrder.setStatus(Status.DELIVERED);
+                    freshOrder.setActive(false);
                     orderRepository.save(freshOrder);
                     updates.add(new StatusUpdate(order.getId(), Status.DELIVERED.name()));;
                     System.out.println("Order " + freshOrder.getId() + " is now DELIVERED");

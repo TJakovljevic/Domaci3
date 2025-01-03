@@ -76,45 +76,33 @@ public class OrderController {
 
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Order placeOrder(@RequestBody OrderDto orderDto) {
-
-        long count = this.orderService.countOrders(List.of(Status.PREPARING, Status.IN_DELIVERY));
-        System.out.println("Count: " + count);
+    public ResponseEntity<Order> placeOrder(@RequestBody OrderDto orderDto) {
         Order order = new Order();
-        if (count >= 3) {
-
-
-
+        //CIM vidim koji su ubijem ih na orderu
+        long count = this.orderService.countOrders(List.of(Status.ORDERED, Status.PREPARING, Status.IN_DELIVERY));
+        if(count >= 3) {
             order.setStatus(Status.CANCELED);
-            order.setCreatedBy(orderDto.getCreatedBy());
             order.setActive(false);
             order.setCreatedAt(LocalDateTime.now());
-            List<Dish> dishes = this.dishRepository.findAllById(orderDto.getDishes());
-            order.setDishes(dishes);
-
-
-            Order savedOrder = this.orderService.save(order);
-
+            order.setCreatedBy(orderDto.getCreatedBy());
             ErrorMessage errorMessage = new ErrorMessage();
-            errorMessage.setOrderEntity(savedOrder);
             errorMessage.setTimestamp(LocalDateTime.now());
             errorMessage.setMessageDescription("Maximum concurrent orders exceeded");
             errorMessage.setStatus(Status.ORDERED);
+            Order savedOrder = this.orderService.save(order);
+            errorMessage.setOrderEntity(savedOrder);
             this.errorRepository.save(errorMessage);
-
-
-
-            return null;
+        }else {
+            order.setStatus(Status.ORDERED);
+            order.setCreatedBy(orderDto.getCreatedBy());
+            order.setActive(orderDto.isActive());
+            order.setCreatedAt(LocalDateTime.now());
+            List<Dish> dishes = this.dishRepository.findAllById(orderDto.getDishes());
+            order.setDishes(dishes);
+            this.orderService.save(order);
         }
 
-        order.setStatus(Status.ORDERED);
-        order.setCreatedBy(orderDto.getCreatedBy());
-        order.setActive(orderDto.isActive());
-        order.setCreatedAt(LocalDateTime.now());
-        List<Dish> dishes = this.dishRepository.findAllById(orderDto.getDishes());
-        order.setDishes(dishes);
-
-        return this.orderService.save(order);
+        return ResponseEntity.ok().build();
     }
 
 

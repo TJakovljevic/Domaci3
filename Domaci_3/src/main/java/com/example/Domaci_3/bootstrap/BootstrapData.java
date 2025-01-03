@@ -94,33 +94,70 @@ public class BootstrapData implements CommandLineRunner {
 
 
 
-
+        //Meni -> Stepin Vajat
         Dish dish1 = new Dish();
-        dish1.setName("Burek");
+        dish1.setName("Batak pileci 200g");
         dish1.setDescription("Lepo");
-        dish1.setPrice(100);
+        dish1.setPrice(400);
 
         Dish dish2 = new Dish();
-        dish2.setName("Sarma");
+        dish2.setName("Belo meso 200g");
         dish2.setDescription("Lepo");
-        dish2.setPrice(100);
+        dish2.setPrice(400);
+
+        Dish dish3 = new Dish();
+        dish3.setName("Stepina traka 230g");
+        dish3.setDescription("Lepo");
+        dish3.setPrice(450);
+
+        Dish dish4 = new Dish();
+        dish4.setName("Pljeskavica 150g");
+        dish4.setDescription("Lepo");
+        dish4.setPrice(300);
+
+        Dish dish5 = new Dish();
+        dish5.setName("Punjena pljeskavica 200g");
+        dish5.setDescription("Lepo");
+        dish5.setPrice(350);
+
+        Dish dish6 = new Dish();
+        dish6.setName("Pohovani kackavalj 180g");
+        dish6.setDescription("Lepo");
+        dish6.setPrice(330);
+
+        Dish dish7 = new Dish();
+        dish7.setName("Dimnjeni vrat 150g");
+        dish7.setDescription("Lepo");
+        dish7.setPrice(400);
+
+        Dish dish8 = new Dish();
+        dish8.setName("Gurmanska pljeskavica 200g");
+        dish8.setDescription("Lepo");
+        dish8.setPrice(350);
+
+        Dish dish9 = new Dish();
+        dish9.setName("Kobasica 200g");
+        dish9.setDescription("Lepo");
+        dish9.setPrice(330);
+
+        Dish dish10 = new Dish();
+        dish10.setName("Pomfrit 200g");
+        dish10.setDescription("Lepo");
+        dish10.setPrice(250);
+
         this.dishRepository.save(dish1);
         this.dishRepository.save(dish2);
+        this.dishRepository.save(dish3);
+        this.dishRepository.save(dish4);
+        this.dishRepository.save(dish5);
+        this.dishRepository.save(dish6);
+        this.dishRepository.save(dish7);
+        this.dishRepository.save(dish8);
+        this.dishRepository.save(dish9);
+        this.dishRepository.save(dish10);
 
-        Order order = new Order();
-        order.setStatus(Status.ORDERED);
-        order.setActive(true);
-        order.setCreatedBy(user1);
-        order.setCreatedAt(LocalDateTime.now());
 
-        Order existingOrder = this.orderRepository.save(order);
 
-        ErrorMessage errorMessage = new ErrorMessage();
-        errorMessage.setStatus(Status.DELIVERED);
-        errorMessage.setMessageDescription("GRESKA");
-        errorMessage.setTimestamp(LocalDateTime.now());
-        errorMessage.setOrderEntity(existingOrder);
-        this.errorRepository.save(errorMessage);
 
 
 

@@ -35,4 +35,8 @@
     <button *ngIf="can_schedule_order" class="btn btn-secondary" [disabled]="!scheduledDate" (click)="scheduleOrder()">
         Schedule Order
     </button>
+    <div>
+        <label>Order price: {{ totalPrice }}</label>
+    </div>
+
 </div>

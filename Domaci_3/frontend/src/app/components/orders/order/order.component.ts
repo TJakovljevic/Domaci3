@@ -19,6 +19,7 @@ export class OrderComponent implements OnInit {
   can_place_order: boolean = false;
   can_schedule_order: boolean = false;
   scheduledDate: string = "";
+  totalPrice: number = 0;
 
 
   constructor(private router: Router, private permissionsService: PermissionsService, private orderService: OrderService) {}
@@ -42,10 +43,13 @@ export class OrderComponent implements OnInit {
   }
 
   toggleDishes(dishId: number) {
+    const dish = this.dishes[dishId - 1];
     if (this.selectedDishes.has(dishId)) {
       this.selectedDishes.delete(dishId);
+      this.totalPrice -= dish.price;
     } else {
       this.selectedDishes.add(dishId);
+      this.totalPrice += dish.price;
     }
   }
 
