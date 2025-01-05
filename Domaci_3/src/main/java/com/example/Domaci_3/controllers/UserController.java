@@ -55,6 +55,11 @@ public class UserController {
 
         return userService.getUserPermissions(email);
     }
+
+    @GetMapping(value = "/admin/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public boolean userAdmin(@PathVariable String email){
+        return this.userService.isUserAdmin(email);
+    }
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public User createUser(@RequestBody UserDto userDto){
         System.out.println(userDto);

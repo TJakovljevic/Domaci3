@@ -50,6 +50,13 @@ export class SearchService {
         return this.http.post(`${this.apiUrl}${this.addedUrl}/search?page=${page}&size=${size}`, body, { headers })
     }
 
+    isUserAdmin(): Observable<any>{
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${this.jwtToken}`
+        });
+        return this.http.get(this.apiUrl+"users/admin/"  + this.current_user, { headers });
+    }
+
     fetchUsers(): Observable<any>{
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${this.jwtToken}`

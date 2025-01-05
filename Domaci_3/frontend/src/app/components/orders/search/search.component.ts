@@ -141,12 +141,17 @@ addNewMessage(messageOutput: any) {
   }
 
   getAdmin(){
-    const token = localStorage.getItem("authToken");
-    if (token != null) {
-      const decodedToken = JSON.parse(atob(token.split('.')[1]));
-      this.isAdmin = decodedToken.admin || "";
-      console.log(this.isAdmin)
-    }
+    this.searchService.isUserAdmin().subscribe(
+        (response) => {
+            this.isAdmin = response;
+            console.log(this.isAdmin)
+
+        },
+        error => {
+            console.error('Error fetching adminCheck:', error);
+        }
+    )
+
   }
 
   fetchUsers() {

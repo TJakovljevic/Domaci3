@@ -61,6 +61,13 @@ export class OrderComponent implements OnInit {
       this.router.navigate([''])
     }
   }
+
+  priceCheck(){
+    if(this.totalPrice <= 0){
+      alert("You didn't order any items.");
+      window.location.reload();
+    }
+  }
   fetchPermissions(){
     this.permissionsService.fetchPermissions().
     subscribe(
@@ -77,7 +84,21 @@ export class OrderComponent implements OnInit {
     );
   }
 
+  checkDate(){
+    const parsedDate = new Date(this.scheduledDate);
+
+    const currentDate = new Date();
+    console.log("Schedule", parsedDate)
+    console.log("Current", currentDate)
+    if(parsedDate < currentDate){
+      alert("Scheduled date must not be later than current date");
+      window.location.reload();
+    }
+
+  }
   submitOrder(){
+
+    this.priceCheck()
 
     const body = {
       createdBy: {
@@ -101,6 +122,10 @@ export class OrderComponent implements OnInit {
   }
 
   scheduleOrder(){
+
+    this.checkDate()
+    this.priceCheck()
+
     const body = {
       createdBy: {
         email: '',

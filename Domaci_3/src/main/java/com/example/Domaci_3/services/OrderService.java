@@ -138,6 +138,9 @@ public class OrderService implements IService<Order, Long>{
 
         LocalDateTime scheduledTime = scheduleOrderDto.getScheduledTime();
         String cronTime = cronConverter(scheduledTime);
+//        if(scheduledTime.isBefore(LocalDateTime.now())){
+//            return null;
+//        }
 
         CronTrigger cronTrigger = new CronTrigger(cronTime);
         this.taskScheduler.schedule(() -> {
