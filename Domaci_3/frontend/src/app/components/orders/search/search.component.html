@@ -73,7 +73,7 @@
         <thead>
         <tr>
             <th>Order ID</th>
-            <th>User ID</th>
+            <th>User</th>
             <th>Status</th>
             <th>Created At</th>
         </tr>
@@ -81,7 +81,7 @@
         <tbody>
         <tr *ngFor="let order of orders">
             <td>{{ order.id }}</td>
-            <td>{{ order.createdAt }}</td>
+            <td>{{ order.createdBy.email }}</td>
             <td>{{ order.status }}</td>
             <td>{{ order.createdAt }}</td>
             <button *ngIf="can_cancel_order && order.status == 'ORDERED' && can_track_order" class="btn btn-danger btn-sm" (click)="cancelOrder(order.id)">
