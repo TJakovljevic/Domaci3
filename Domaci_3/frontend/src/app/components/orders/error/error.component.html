@@ -7,6 +7,7 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Order Number</th>
+                <th scope="col">User</th>
                 <th scope="col">Message</th>
                 <th scope="col">Status</th>
             </tr>
@@ -14,7 +15,8 @@
             <tbody>
             <tr *ngFor="let error of errors; let i = index">
                 <th scope="row">{{ error.id }}</th>
-                <td> {{error.orderEntity?.id}} </td>
+                <td> {{ error.orderEntity?.id }} </td>
+                <td> {{ error.orderEntity?.createdBy?.email }}</td>
                 <td>{{ error.messageDescription }}</td>
                 <td>{{ error.status }}</td>
             </tr>

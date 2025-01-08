@@ -47,7 +47,7 @@ public class ErrorService implements IService<ErrorMessage, Long>{
             return this.errorRepository.findAll(PageRequest.of(page, size));
         }
         System.out.println("OrderIds: " + orderIds);
-        return this.errorRepository.findErrors(orderIds,PageRequest.of(page, size, Sort.by("createdAt").descending()));
+        return this.errorRepository.findErrors(orderIds,PageRequest.of(page, size));
     }
 
 

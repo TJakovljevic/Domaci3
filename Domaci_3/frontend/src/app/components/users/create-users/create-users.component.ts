@@ -15,6 +15,7 @@ export class CreateUsersComponent implements OnInit{
 
   canCreateUsers: boolean = false;
   permissions: Permission[] = [];
+  isAdmin: boolean = false;
 
 
   checkPermissions() {

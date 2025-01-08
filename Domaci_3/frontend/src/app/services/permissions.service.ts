@@ -28,6 +28,7 @@ export class PermissionsService {
     }
   }
 
+
   fetchPermissions(): Observable<any>{
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.jwtToken}`  // Bearer token
